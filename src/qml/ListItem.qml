@@ -6,16 +6,14 @@ Item {
     width: parent.width
     height: 40
 
-    state: {
-        return (moveArea.itemIndex === index && moveArea.listIndex === listIndex) ? "selected" : "";
-    }
+    state: ListView.isCurrentItem ? "selected" : "";
 
     Rectangle {
         id: container
         width: 40
         height: 40
 
-        color: colorCode ? colorCode : "white"
+        color: colorCode ? colorCode : ""
 
         Text {
             id: text

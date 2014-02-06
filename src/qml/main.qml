@@ -16,13 +16,15 @@ Rectangle {
             y: 20
             width: 40
             height: Math.max(childrenRect.height, 40)
+
+            currentIndex: -1
+
             model: ListModel {
                 ListElement { colorCode: "red"; name: "1" }
                 ListElement { colorCode: "blue"; name: "2" }
                 ListElement { colorCode: "green"; name: "3" }
             }
             delegate: ListItem {
-                property int listIndex: 1
             }
         }
 
@@ -32,14 +34,17 @@ Rectangle {
             y: 20
             width: 40
             height: Math.max(childrenRect.height, 40)
+
+            currentIndex: -1
+
             model: ListModel {
                 ListElement { colorCode: "red"; name: "4" }
                 ListElement { colorCode: "blue"; name: "5" }
                 ListElement { colorCode: "green"; name: "6" }
             }
             delegate: ListItem {
-                property int listIndex: 2
             }
+
         }
 
         MouseArea {
@@ -47,9 +52,6 @@ Rectangle {
 
             property var clickPosition: { x: 0; y: 0 }
             property var itemPosition: { x: 0; y: 0 }
-
-            property int listIndex: -1
-            property int itemIndex: -1
 
             property var holder: null
             parent: main
@@ -74,8 +76,7 @@ Rectangle {
                             modelItem: modelItem,
                             clickInItemPosition: currentItemPosition
                         };
-                        itemIndex = indexItem;
-                        listIndex = item.listIndex;
+                        currentList.currentIndex = indexItem;
                         hidden.width = item.width;
                         hidden.height = item.height;
                         hidden.color = modelItem.colorCode;
@@ -107,8 +108,8 @@ Rectangle {
                                 if (holder.index !== indexItem)
                                 {
                                     currentList.model.move(holder.index, indexItem, 1);
+                                    currentList.currentIndex = indexItem;
                                     holder.index = indexItem;
-                                    itemIndex = indexItem;
                                 }
                             }
                             else
@@ -117,27 +118,25 @@ Rectangle {
                                 var modelItem = currentList.model.get(indexItem);
                                 holder.modelItem = modelItem;
                                 holder.list.model.remove(holder.index, 1);
+                                holder.list.currentIndex = -1;
                                 indexItem = currentList.indexAt(currentListPosition.x, currentListPosition.y);
                                 item = currentList.itemAt(currentListPosition.x, currentListPosition.y);
-
-
+                                currentList.currentIndex = indexItem;
                                 holder.index = indexItem;
                                 holder.list = currentList;
-                                itemIndex = indexItem;
-                                listIndex = item.listIndex;
                             }
                         }
                         else
                         {
                             if (currentList.count === 0)
                             {
-                                holder.list.model.remove(holder.index, 1);
                                 currentList.model.insert(0, holder.modelItem);
                                 holder.modelItem = currentList.model.get(0);
+                                holder.list.model.remove(holder.index, 1);
+                                holder.list.currentIndex = -1;
                                 holder.index = 0;
                                 holder.list = currentList;
-                                itemIndex = 0;
-                                listIndex = currentList.itemAt(currentListPosition.x, currentListPosition.y).listIndex;
+                                currentList.currentIndex = 0;
                             }
                         }
                     }
@@ -145,10 +144,9 @@ Rectangle {
             }
 
             onReleased: {
+                holder.list.currentIndex = -1;
                 holder = null;
                 hidden.visible = false;
-                itemIndex = -1;
-                listIndex = -1;
             }
         }
     }
