@@ -52,9 +52,6 @@ Rectangle {
         MouseArea {
             id: moveArea
 
-            property var clickPosition: { x: 0; y: 0 }
-            property var itemPosition: { x: 0; y: 0 }
-
             property var holder: null
             parent: main
             anchors.fill: board
