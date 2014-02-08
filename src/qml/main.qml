@@ -59,13 +59,11 @@ Rectangle {
             parent: main
             anchors.fill: board
             onPressed: {
-                clickPosition = { x: mouse.x, y: mouse.y };
-                Logic.handlePress(clickPosition, board, hidden, moveArea);
+                Logic.handlePress(mouse, board, hidden, moveArea);
             }
 
             onPositionChanged: {
-                clickPosition = { x: mouse.x, y: mouse.y };
-                Logic.positionChanged(clickPosition, board, hidden, moveArea);
+                Logic.positionChanged(mouse, board, hidden, moveArea);
             }
 
             onReleased: {

@@ -2,19 +2,19 @@
 
 var holder = null;
 
-function handlePress(clickPosition, board, hidden, currentItem)
+function handlePress(mouse, board, hidden, currentItem)
 {
-    var boardPosition = currentItem.mapToItem(board, clickPosition.x,clickPosition.y);
+    var boardPosition = currentItem.mapToItem(board, mouse.x,mouse.y);
     var currentList = board.childAt(boardPosition.x, boardPosition.y);
     if (currentList !== null)
     {
-        var listPosition = currentItem.mapToItem(currentList, clickPosition.x, clickPosition.y);
-        var currentListPosition = currentItem.mapToItem(currentList, clickPosition.x, clickPosition.y);
+        var listPosition = currentItem.mapToItem(currentList, mouse.x, mouse.y);
+        var currentListPosition = currentItem.mapToItem(currentList, mouse.x, mouse.y);
         var indexItem = currentList.indexAt(currentListPosition.x, currentListPosition.y);
         var item = currentList.itemAt(currentListPosition.x, currentListPosition.y);
         if (item !== null)
         {
-            var currentItemPosition = currentItem.mapToItem(item, clickPosition.x, clickPosition.y);
+            var currentItemPosition = currentItem.mapToItem(item, mouse.x, mouse.y);
             var modelItem = currentList.model.get(indexItem);
             holder = {
                 list: currentList,
@@ -34,18 +34,18 @@ function handlePress(clickPosition, board, hidden, currentItem)
     }
 }
 
-function positionChanged(clickPosition, board, hidden, currentItem)
+function positionChanged(mouse, board, hidden, currentItem)
 {
     if (holder !== null)
     {
-        var boardPosition = currentItem.mapToItem(board, clickPosition.x, clickPosition.y);
+        var boardPosition = currentItem.mapToItem(board, mouse.x, mouse.y);
         hidden.x = boardPosition.x - holder.clickInItemPosition.x;
         hidden.y = boardPosition.y - holder.clickInItemPosition.y;
         var currentList = board.childAt(boardPosition.x, boardPosition.y);
 
         if (currentList !== null)
         {
-            var currentListPosition = currentItem.mapToItem(currentList, clickPosition.x, clickPosition.y);
+            var currentListPosition = currentItem.mapToItem(currentList, mouse.x, mouse.y);
             var indexItem = currentList.indexAt(currentListPosition.x, currentListPosition.y);
             var item = currentList.itemAt(currentListPosition.x, currentListPosition.y);
             if (indexItem !== -1)
