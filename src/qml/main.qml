@@ -1,5 +1,7 @@
 import QtQuick 2.1
 
+import "../js/logic.js" as Logic
+
 Rectangle {
     width: 640;  height: 480
 
@@ -57,99 +59,17 @@ Rectangle {
             parent: main
             anchors.fill: board
             onPressed: {
-                clickPosition = { x: mouseX, y: mouseY };
-                var boardPosition = mapToItem(board, mouseX, mouseY);
-                var currentList = board.childAt(boardPosition.x, boardPosition.y);
-                if (currentList !== null)
-                {
-                    var listPosition = mapToItem(currentList, mouseX, mouseY);
-                    var currentListPosition = mapToItem(currentList, mouseX, mouseY);
-                    var indexItem = currentList.indexAt(currentListPosition.x, currentListPosition.y);
-                    var item = currentList.itemAt(currentListPosition.x, currentListPosition.y);
-                    if (item !== null)
-                    {
-                        var currentItemPosition = mapToItem(item, mouseX, mouseY);
-                        var modelItem = currentList.model.get(indexItem);
-                        holder = {
-                            list: currentList,
-                            index: indexItem,
-                            modelItem: modelItem,
-                            clickInItemPosition: currentItemPosition
-                        };
-                        currentList.currentIndex = indexItem;
-                        hidden.width = item.width;
-                        hidden.height = item.height;
-                        hidden.color = modelItem.colorCode;
-                        hidden.name = modelItem.name;
-                        hidden.visible = true;
-                        hidden.x = boardPosition.x - currentItemPosition.x;
-                        hidden.y = boardPosition.y - currentItemPosition.y;
-                    }
-                }
+                clickPosition = { x: mouse.x, y: mouse.y };
+                Logic.handlePress(clickPosition, board, hidden, moveArea);
             }
 
             onPositionChanged: {
-                if (holder !== null)
-                {
-                    var boardPosition = mapToItem(board, mouseX, mouseY);
-                    hidden.x = boardPosition.x - holder.clickInItemPosition.x;
-                    hidden.y = boardPosition.y - holder.clickInItemPosition.y;
-                    var currentList = board.childAt(boardPosition.x, boardPosition.y);
-
-                    if (currentList !== null)
-                    {
-                        var currentListPosition = mapToItem(currentList, mouseX, mouseY);
-                        var indexItem = currentList.indexAt(currentListPosition.x, currentListPosition.y);
-                        var item = currentList.itemAt(currentListPosition.x, currentListPosition.y);
-                        if (indexItem !== -1)
-                        {
-                            if (holder.list === currentList)
-                            {
-                                if (holder.index !== indexItem)
-                                {
-                                    currentList.model.move(holder.index, indexItem, 1);
-                                    currentList.currentIndex = indexItem;
-                                    holder.index = indexItem;
-                                }
-                            }
-                            else
-                            {
-                                currentList.model.insert(indexItem, holder.modelItem);
-                                var modelItem = currentList.model.get(indexItem);
-                                holder.modelItem = modelItem;
-                                holder.list.model.remove(holder.index, 1);
-                                holder.list.currentIndex = -1;
-                                indexItem = currentList.indexAt(currentListPosition.x, currentListPosition.y);
-                                item = currentList.itemAt(currentListPosition.x, currentListPosition.y);
-                                currentList.currentIndex = indexItem;
-                                holder.index = indexItem;
-                                holder.list = currentList;
-                            }
-                        }
-                        else
-                        {
-                            if (currentList.count === 0)
-                            {
-                                currentList.model.insert(0, holder.modelItem);
-                                holder.modelItem = currentList.model.get(0);
-                                holder.list.model.remove(holder.index, 1);
-                                holder.list.currentIndex = -1;
-                                holder.index = 0;
-                                holder.list = currentList;
-                                currentList.currentIndex = 0;
-                            }
-                        }
-                    }
-                }
+                clickPosition = { x: mouse.x, y: mouse.y };
+                Logic.positionChanged(clickPosition, board, hidden, moveArea);
             }
 
             onReleased: {
-                if (holder !== null)
-                {
-                    holder.list.currentIndex = -1;
-                    holder = null;
-                    hidden.visible = false;
-                }
+                Logic.released(hidden);
             }
         }
     }

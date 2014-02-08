@@ -4,14 +4,16 @@ set(qml_files
   qml/main.qml
   qml/ListItem.qml)
 
-set(sources main.cpp ${qml_files})
+set(js_files
+   js/logic.js)
+
+set(sources main.cpp ${qml_files} ${js_files})
 
 if (ENABLE_QML_DEBUGGING)
   set(sources ${sources} ${qml_debugging_helper})
 endif()
 
-set(output_files)
-foreach(file ${qml_files})
+foreach(file ${qml_files} ${js_files})
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/${file}
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_BINARY_DIR}/${file}
     DEPENDS ${file})
