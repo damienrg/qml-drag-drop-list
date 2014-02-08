@@ -144,9 +144,12 @@ Rectangle {
             }
 
             onReleased: {
-                holder.list.currentIndex = -1;
-                holder = null;
-                hidden.visible = false;
+                if (holder !== null)
+                {
+                    holder.list.currentIndex = -1;
+                    holder = null;
+                    hidden.visible = false;
+                }
             }
         }
     }
