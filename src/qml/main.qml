@@ -69,17 +69,11 @@ Rectangle {
         }
     }
 
-    Rectangle {
+    ListItem {
         id: hidden
         visible: false
         rotation: 10
 
-        property string name: ""
-
-        Text {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            text: hidden.name
-        }
+        property var model
     }
 }

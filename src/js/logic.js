@@ -17,6 +17,7 @@ function handlePress(mouse, board, hidden, currentItem)
             var currentItemPosition = currentItem.mapToItem(item, mouse.x, mouse.y);
             var modelItem = currentList.model.get(indexItem);
             holder = {
+                initialList: currentList,
                 list: currentList,
                 index: indexItem,
                 modelItem: modelItem,
@@ -25,8 +26,7 @@ function handlePress(mouse, board, hidden, currentItem)
             currentList.currentIndex = indexItem;
             hidden.width = item.width;
             hidden.height = item.height;
-            hidden.color = modelItem.colorCode;
-            hidden.name = modelItem.name;
+            hidden.model = modelItem;
             hidden.visible = true;
             hidden.x = boardPosition.x - currentItemPosition.x;
             hidden.y = boardPosition.y - currentItemPosition.y;
@@ -52,6 +52,7 @@ function positionChanged(mouse, board, hidden, currentItem)
             {
                 if (holder.list === currentList)
                 {
+                    console.log("same list");
                     if (holder.index !== indexItem)
                     {
                         currentList.model.move(holder.index, indexItem, 1);
@@ -59,18 +60,40 @@ function positionChanged(mouse, board, hidden, currentItem)
                         holder.index = indexItem;
                     }
                 }
-                else
+                else if (currentList === holder.initialList)
                 {
-                    currentList.model.insert(indexItem, holder.modelItem);
-                    var modelItem = currentList.model.get(indexItem);
-                    holder.modelItem = modelItem;
+                    console.log("newList equals initialList");
+                    currentList.currentItem.collapsed = false;
                     holder.list.model.remove(holder.index, 1);
                     holder.list.currentIndex = -1;
-                    indexItem = currentList.indexAt(currentListPosition.x, currentListPosition.y);
-                    item = currentList.itemAt(currentListPosition.x, currentListPosition.y);
+                    currentList.model.move(holder.initialList.currentIndexItem, indexItem, 1);
                     currentList.currentIndex = indexItem;
                     holder.index = indexItem;
                     holder.list = currentList;
+//                    var modelItem = currentList.model.get(indexItem);
+//                    holder.modelItem = modelItem;
+                }
+                else
+                {
+                    if (holder.list === holder.initialList)
+                    {
+                        console.log("previousList equals initialList");
+                        holder.list.currentItem.collapsed = true;
+                        currentList.model.insert(indexItem, holder.modelItem);
+                        currentList.currentIndex = indexItem;
+                        holder.index = indexItem;
+                        holder.list = currentList;
+                    }
+                    else
+                    {
+                        console.log("other cases");
+                        currentList.model.insert(indexItem, holder.modelItem);
+                        holder.list.model.remove(holder.index, 1);
+                        holder.list.currentIndex = -1;
+                        currentList.currentIndex = indexItem;
+                        holder.index = indexItem;
+                        holder.list = currentList;
+                    }
                 }
             }
             else
@@ -78,7 +101,6 @@ function positionChanged(mouse, board, hidden, currentItem)
                 if (currentList.count === 0)
                 {
                     currentList.model.insert(0, holder.modelItem);
-                    holder.modelItem = currentList.model.get(0);
                     holder.list.model.remove(holder.index, 1);
                     holder.list.currentIndex = -1;
                     holder.index = 0;
