@@ -41,71 +41,76 @@ function positionChanged(mouse, board, hidden, currentItem)
         var boardPosition = currentItem.mapToItem(board, mouse.x, mouse.y);
         hidden.x = boardPosition.x - holder.clickInItemPosition.x;
         hidden.y = boardPosition.y - holder.clickInItemPosition.y;
-        var currentList = board.childAt(boardPosition.x, boardPosition.y);
+        var newList = board.childAt(boardPosition.x, boardPosition.y);
 
-        if (currentList !== null)
+        if (newList !== null)
         {
-            var currentListPosition = currentItem.mapToItem(currentList, mouse.x, mouse.y);
-            var indexItem = currentList.indexAt(currentListPosition.x, currentListPosition.y);
-            var item = currentList.itemAt(currentListPosition.x, currentListPosition.y);
+            var currentListPosition = currentItem.mapToItem(newList, mouse.x, mouse.y);
+            var indexItem = newList.indexAt(currentListPosition.x, currentListPosition.y);
+            var item = newList.itemAt(currentListPosition.x, currentListPosition.y);
             if (indexItem !== -1)
             {
-                if (holder.list === currentList)
+                if (holder.list === newList)
                 {
                     console.log("same list");
                     if (holder.index !== indexItem)
                     {
-                        currentList.model.move(holder.index, indexItem, 1);
-                        currentList.currentIndex = indexItem;
+                        newList.model.move(holder.index, indexItem, 1);
+                        newList.currentIndex = indexItem;
                         holder.index = indexItem;
                     }
                 }
-                else if (currentList === holder.initialList)
+                else if (newList === holder.initialList)
                 {
                     console.log("newList equals initialList");
-                    currentList.currentItem.collapsed = false;
-                    holder.list.model.remove(holder.index, 1);
+                    print("name currentIndex = " + newList.model.get(newList.currentIndex).name);
+                    print("name initialList = " + holder.initialList.model.get(holder.initialList.currentIndex).name);
+                    newList.currentItem.collapsed = false;
+                    newList.model.move(holder.initialList.currentIndex, indexItem, 1);
+                    newList.currentIndex = indexItem;
                     holder.list.currentIndex = -1;
-                    currentList.model.move(holder.initialList.currentIndexItem, indexItem, 1);
-                    currentList.currentIndex = indexItem;
+                    holder.list.model.remove(holder.index, 1);
                     holder.index = indexItem;
-                    holder.list = currentList;
-//                    var modelItem = currentList.model.get(indexItem);
-//                    holder.modelItem = modelItem;
+                    holder.list = newList;
+                    var modelItem = newList.model.get(indexItem);
+                    holder.modelItem = modelItem;
                 }
                 else
                 {
                     if (holder.list === holder.initialList)
                     {
                         console.log("previousList equals initialList");
+                        console.log(holder.list.model.get(holder.list.currentIndex).name);
                         holder.list.currentItem.collapsed = true;
-                        currentList.model.insert(indexItem, holder.modelItem);
-                        currentList.currentIndex = indexItem;
+                        holder.initialList.currentIndex = holder.list.currentIndex;
+                        newList.model.insert(indexItem, holder.modelItem);
+                        newList.currentIndex = indexItem;
                         holder.index = indexItem;
-                        holder.list = currentList;
+                        holder.list = newList;
                     }
                     else
                     {
                         console.log("other cases");
-                        currentList.model.insert(indexItem, holder.modelItem);
-                        holder.list.model.remove(holder.index, 1);
+                        newList.model.insert(indexItem, holder.modelItem);
                         holder.list.currentIndex = -1;
-                        currentList.currentIndex = indexItem;
+                        holder.list.model.remove(holder.index, 1);
+                        newList.currentIndex = indexItem;
                         holder.index = indexItem;
-                        holder.list = currentList;
+                        holder.list = newList;
                     }
                 }
             }
             else
             {
-                if (currentList.count === 0)
+                if (newList.count === 0)
                 {
-                    currentList.model.insert(0, holder.modelItem);
-                    holder.list.model.remove(holder.index, 1);
-                    holder.list.currentIndex = -1;
+                    newList.model.insert(0, holder.modelItem);
+                    // TODO collapsed or remove
+//                    holder.list.currentIndex = -1;
+//                    holder.list.model.remove(holder.index, 1);
                     holder.index = 0;
-                    holder.list = currentList;
-                    currentList.currentIndex = 0;
+                    holder.list = newList;
+                    holder.list.currentIndex = 0;
                 }
             }
         }
@@ -116,6 +121,12 @@ function released(hidden)
 {
     if (holder !== null)
     {
+        if (holder.list !== holder.initialList)
+        {
+            print("collapsed = " + holder.initialList.currentItem.collapsed);
+            holder.initialList.model.remove(holder.initialList.currentIndex);
+            holder.initialList.currentIndex = -1;
+        }
         holder.list.currentIndex = -1;
         holder = null;
         hidden.visible = false;

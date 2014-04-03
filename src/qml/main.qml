@@ -13,11 +13,14 @@ Rectangle {
         color: "#222222"
 
         ListView {
+            id: view1
             interactive: false
             x: 20
             y: 20
             width: 40
-            height: Math.max(childrenRect.height, 40)
+            height: Math.max(itemWidth * count, 40)
+
+            property int itemWidth: 40
 
             currentIndex: -1
 
@@ -27,15 +30,26 @@ Rectangle {
                 ListElement { colorCode: "green"; name: "3" }
             }
             delegate: ListItem {
+                width: view2.itemWidth
+                height: 40
             }
         }
 
         ListView {
+            id : view2
             interactive: false
             x: 200
             y: 20
             width: 40
-            height: Math.max(childrenRect.height, 40)
+            height: Math.max(itemWidth * count, 40)
+
+            property int itemWidth: 40
+
+            Rectangle {
+                color: "white"
+                anchors.fill: parent
+                z: -1
+            }
 
             currentIndex: -1
 
@@ -45,6 +59,8 @@ Rectangle {
                 ListElement { colorCode: "green"; name: "6" }
             }
             delegate: ListItem {
+                width: view2.itemWidth
+                height: 40
             }
 
         }

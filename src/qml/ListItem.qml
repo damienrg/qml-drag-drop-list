@@ -4,14 +4,12 @@ Item {
     id: item
 
     width: parent.width
-    height: 40
 
     property bool collapsed: false
 
     Rectangle {
         id: container
-        width: 40
-        height: 40
+        anchors.fill: parent
 
         color: model ? model.colorCode : ""
 
@@ -30,6 +28,14 @@ Item {
             PropertyChanges {
                 target: item
                 height: 0
+            }
+            PropertyChanges {
+                target: container
+                height: 0
+            }
+            PropertyChanges {
+                target: text
+                text: ""
             }
         },
         State {
